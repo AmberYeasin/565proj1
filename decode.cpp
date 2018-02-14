@@ -88,6 +88,16 @@ void checkKey(string ciph, string key, int fwl, set<string> dict)
     cout << "Decryption using key [" << key << "] is : "<< decrypt(ciph,key) << endl;
 }
 
+string intToKey(int n, int length)
+{
+  string key(length, 'A');
+  for(int i = length - 1; i >= 0; i--)
+  {
+    key[i] = (n % 26) + 'A';
+    n = (n / 26);
+  }
+}
+
 void bruteForce()
 {
 
