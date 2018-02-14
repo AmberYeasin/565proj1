@@ -19,8 +19,12 @@
 #include <set>
 #include <string>
 #include <string.h>
+#include <cmath>
+#include <chrono>
 
 using namespace std;
+
+set<string> dictionary;
 
 //grows the pre-set key to the appropriate lenth
 string generateKey(string ciph, string key)
@@ -73,19 +77,19 @@ string decrypt(string encrypted_text, string key)
 }
 
 //checks dictionary file for decrypted word
-bool isWord(string word, set<string> dict)
+bool isWord(string word)
 {
   bool b = false;
-  if (dict.count(word) > 0)
+  if (dictionary.count(word) > 0)
     b = true;
   return b;
 }
 
-void checkKey(string ciph, string key, int fwl, set<string> dict)
+void checkKey(string ciph, string key, int fwl)
 {
-  string first = ciph.substr(0,fwl);
-  if(isWord(first,dict))
-    cout << "Decryption using key [" << key << "] is : "<< decrypt(ciph,key) << endl;
+  string first(ciph.substr(0,fwl));
+  if(isWord(decrypt(first,generateKey(first,key))))
+    cout << "Decryption using key [" << key << "] is : "<< decrypt(ciph,generateKey(ciph,key)) << endl;
 }
 
 string intToKey(int n, int length)
@@ -96,11 +100,16 @@ string intToKey(int n, int length)
     key[i] = (n % 26) + 'A';
     n = (n / 26);
   }
+  return key;
 }
 
-void bruteForce()
+void bruteForce(string ciph, int keyLength, int fwl)
 {
-
+  for(int i = 0; i < pow(26, keyLength); i++)
+  {
+    string key = intToKey(i, keyLength);
+    checkKey(ciph, key, fwl);
+  }
 }
 
 
@@ -147,17 +156,17 @@ int main() {
   //take in cipher to decode, key length, and first word length
   string ciph;
   int keyLength, firstWordLength;
-  set<string> dictionary;
-
-  cout << "Ciphertext to decode: ";
-  cin  >> ciph;
-  cout << "Enter key length: ";
-  cin  >> keyLength;
-  cout << "Enter first word length: ";
-  cin  >> firstWordLength;
-
-  //cout << "Cipher is: " << ciph << ", key is: " << keyLength << ", fwl is: " << firstWordLength;
-
+  // set<string> dictionary;
+//
+//   cout << "Ciphertext to decode: ";
+//   cin  >> ciph;
+//   cout << "Enter key length: ";
+//   cin  >> keyLength;
+//   cout << "Enter first word length: ";
+//   cin  >> firstWordLength;
+//
+//   //cout << "Cipher is: " << ciph << ", key is: " << keyLength << ", fwl is: " << firstWordLength;
+//
   ifstream dictFile("dict.txt");
   if(!dictFile)
   {
@@ -172,21 +181,53 @@ int main() {
       dictionary.insert(word);
     }
   }
+//
+// //TODO: add all letters
+//     char set[] = {'A', 'B', 'C', 'D'};
+//     int n = 3;//later change to 26
+//     string keyword = "AMBER";
+//     string key = generateKey(ciph, keyword);
+//     string encrypted_text = encrypt(ciph, key);
+//
+//     cout << "key : "
+//          << key << "\n";
+//
+//     cout << "Ciphertext : "
+//          << encrypted_text << "\n";
+//          //TODO: keylength as input
+//     crack(set, "", 3, 4, ciph);
+  ciph = "MSOKKJCOSXOEEKDTOSLGFWCMCHSUSGX";
+  keyLength = 2;
+  firstWordLength = 6;
 
-//TODO: add all letters
-    char set[] = {'A', 'B', 'C', 'D'};
-    int n = 3;//later change to 26
-    string keyword = "AMBER";
-    string key = generateKey(ciph, keyword);
-    string encrypted_text = encrypt(ciph, key);
 
-    cout << "key : "
-         << key << "\n";
 
-    cout << "Ciphertext : "
-         << encrypted_text << "\n";
-         //TODO: keylength as input
-    crack(set, "", 3, 4, ciph);
+  ciph = "OOPCULNWFRCFQAQJGPNARMEYUODYOUNRGWORQEPVARCEPBBSCEQYEARAJUYGWWYACYWBPRNEJBMDTEAEYCCFJNENSGWAQRTSJTGXNRQRMDGFEEPHSJRGFCFMACCB";
+  keyLength = 3;
+  firstWordLength = 7;
 
-    return 0;
+  ciph = "MTZHZEOQKASVBDOWMWMKMNYIIHVWPEXJA";
+  keyLength = 4;
+  firstWordLength = 10;
+
+
+  ciph = "HUETNMIXVTMQWZTQMMZUNZXNSSBLNSJVSJQDLKR";
+	keyLength = 5;
+	firstWordLength = 11;
+
+
+  ciph = "LDWMEKPOPSWNOAVBIDHIPCEWAETYRVOAUPSINOVDIEDHCDSELHCCPVHRPOHZUSERSFS";
+	keyLength = 6;
+	firstWordLength = 9;
+  cout << "Start Brute Force Attack\n";
+
+  auto start = chrono::system_clock::now();
+
+  bruteForce(ciph, keyLength, firstWordLength);
+
+  auto end = chrono::system_clock::now();
+  std::chrono::duration<double>  duration = end-start;
+  cout << "print decrypt Time: " << duration.count() << endl;
+
+  return 0;
 }
