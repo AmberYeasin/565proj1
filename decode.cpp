@@ -13,10 +13,10 @@
 **
 */
 
-
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <string>
 #include <string.h>
 
@@ -72,6 +72,21 @@ string decrypt(string encrypted_text, string key)
     return decrypt_text;
 }
 
+//checks dictionary file for decrypted word
+bool isWord(string word, set<string> dict)
+{
+  bool b = false;
+  if (dict.count(word) > 0)
+    b = true;
+  return b;
+}
+
+void checkKey(string ciph, string key, int fwl, set<string> dict)
+{
+  string first = ciph.substr(0,fwl);
+  if(isWord(first,dict))
+    cout << "Decryption using key [" << key << "] is : "<< decrypt(ciph,key) << endl;
+}
 
 
 //  n=setSize, k=keyLength
@@ -117,6 +132,7 @@ int main() {
   //take in cipher to decode, key length, and first word length
   string ciph;
   int keyLength, firstWordLength;
+  set<string> dictionary;
 
   cout << "Ciphertext to decode: ";
   cin  >> ciph;
@@ -127,14 +143,19 @@ int main() {
 
   //cout << "Cipher is: " << ciph << ", key is: " << keyLength << ", fwl is: " << firstWordLength;
 
-  ifstream dictionary("dict.txt");
-  if(!dictionary)
+  ifstream dictFile("dict.txt");
+  if(!dictFile)
   {
     cout << "While opening a file an error is encountered" << endl;
   }
   else
   {
     cout << "File is successfully opened" << endl;
+    string word;
+    while(getline(dictFile,word))
+    {
+      dictionary.insert(word);
+    }
   }
 
 //TODO: add all letters
