@@ -22,48 +22,6 @@
 
 using namespace std;
 
-int main() {
-  //take in cipher to decode, key length, and first word length
-  string ciph;
-  int keyLength, firstWordLength;
-
-  cout << "Ciphertext to decode: ";
-  cin  >> ciph;
-  cout << "Enter key length: ";
-  cin  >> keyLength;
-  cout << "Enter first word length: ";
-  cin  >> firstWordLength;
-
-  //cout << "Cipher is: " << ciph << ", key is: " << keyLength << ", fwl is: " << firstWordLength;
-
-  ifstream dictionary("dict.txt");
-  if(!dictionary)
-  {
-    cout << "While opening a file an error is encountered" << endl;
-  }
-  else
-  {
-    cout << "File is successfully opened" << endl;
-  }
-
-//TODO: add all letters
-    char set[] = {'A', 'B', 'C', 'D'};
-    int n = 3;//later change to 26
-    string keyword = "AMBER";
-    string key = decode::generateKey(ciph, keyword);
-    string encrypted_text = decode::encrypt(ciph, key);
-
-    cout << "key : "
-         << key << "\n";
-
-    cout << "Ciphertext : "
-         << encrypted_text << "\n";
-         //TODO: keylength as input
-    crack(set, "", 3, 4, ciph);
-
-    return 0;
-}
-
 //grows the pre-set key to the appropriate lenth
 string generateKey(string ciph, string key)
 {
@@ -152,4 +110,47 @@ void checkFile(string possKey, int keylength)
         cout << "found: " << search << "line: " << curLine << endl;
     }
 }*/
+}
+
+
+int main() {
+  //take in cipher to decode, key length, and first word length
+  string ciph;
+  int keyLength, firstWordLength;
+
+  cout << "Ciphertext to decode: ";
+  cin  >> ciph;
+  cout << "Enter key length: ";
+  cin  >> keyLength;
+  cout << "Enter first word length: ";
+  cin  >> firstWordLength;
+
+  //cout << "Cipher is: " << ciph << ", key is: " << keyLength << ", fwl is: " << firstWordLength;
+
+  ifstream dictionary("dict.txt");
+  if(!dictionary)
+  {
+    cout << "While opening a file an error is encountered" << endl;
+  }
+  else
+  {
+    cout << "File is successfully opened" << endl;
+  }
+
+//TODO: add all letters
+    char set[] = {'A', 'B', 'C', 'D'};
+    int n = 3;//later change to 26
+    string keyword = "AMBER";
+    string key = generateKey(ciph, keyword);
+    string encrypted_text = encrypt(ciph, key);
+
+    cout << "key : "
+         << key << "\n";
+
+    cout << "Ciphertext : "
+         << encrypted_text << "\n";
+         //TODO: keylength as input
+    crack(set, "", 3, 4, ciph);
+
+    return 0;
 }
