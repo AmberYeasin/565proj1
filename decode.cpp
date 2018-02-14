@@ -13,10 +13,10 @@
 **
 */
 
-
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <string>
 #include <string.h>
 
@@ -72,6 +72,26 @@ string decrypt(string encrypted_text, string key)
     return decrypt_text;
 }
 
+//checks dictionary file for decrypted word
+bool isWord(string word, set<string> dict)
+{
+  bool b = false;
+  if (dict.count(word) > 0)
+    b = true;
+  return b;
+}
+
+void checkKey(string ciph, string key, int fwl, set<string> dict)
+{
+  string first = ciph.substr(0,fwl);
+  if(isWord(first,dict))
+    cout << "Decryption using key [" << key << "] is : "<< decrypt(ciph,key) << endl;
+}
+
+void bruteForce()
+{
+
+}
 
 
 //  n=setSize, k=keyLength
@@ -112,19 +132,12 @@ void checkFile(string possKey, int keylength)
 }*/
 }
 
-string intToKey(int n, int length){
-  string key(length, 'A');
-  for(int i = length - 1; i >= 0; i--){
-    key[i] = (n % 26) + 'A';
-    n = (n / 26);
-  }
-  return key;
-}
 
 int main() {
   //take in cipher to decode, key length, and first word length
   string ciph;
   int keyLength, firstWordLength;
+  set<string> dictionary;
 
   cout << "Ciphertext to decode: ";
   cin  >> ciph;
@@ -135,14 +148,19 @@ int main() {
 
   //cout << "Cipher is: " << ciph << ", key is: " << keyLength << ", fwl is: " << firstWordLength;
 
-  ifstream dictionary("dict.txt");
-  if(!dictionary)
+  ifstream dictFile("dict.txt");
+  if(!dictFile)
   {
     cout << "While opening a file an error is encountered" << endl;
   }
   else
   {
     cout << "File is successfully opened" << endl;
+    string word;
+    while(getline(dictFile,word))
+    {
+      dictionary.insert(word);
+    }
   }
 
 //TODO: add all letters
@@ -159,5 +177,6 @@ int main() {
          << encrypted_text << "\n";
          //TODO: keylength as input
     crack(set, "", 3, 4, ciph);
+
     return 0;
 }
